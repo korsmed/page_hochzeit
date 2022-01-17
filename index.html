@@ -63,6 +63,125 @@
 	<!--[if lt IE 9]>
 	<script src="js/respond.min.js"></script>
 	<![endif]-->
+	<script>
+		//where the magic happens
+		function ical_download(){
+		 
+		 //name of event in iCal
+		 this.eventName = 'Hochzeit Daniel & Julia';
+		 
+		 //name of file to download as
+		 this.fileName = 'hochzeit-daniel-julia.ics';
+		 
+		 //start time of event in iCal
+		 this.dateStart = '2022-05-14';
+		 
+		 //end time of event in iCal
+		 this.dateEnd = '2022-05-14';
+	 
+	 
+		 //helper functions
+		 
+		 //iso date for ical formats
+		 this._isofix = function(d){
+			   var offset = ("0"+((new Date()).getTimezoneOffset()/60)).slice(-2);
+	 
+			 if(typeof d=='string'){
+				 return d.replace(/\-/g, '')+'T'+offset+'1700Z';
+			 }else{
+					 return d.getFullYear()+this._zp(d.getMonth()+1)+this._zp(d.getDate())+'T'+this._zp(d.getHours())+"0000Z";
+			   }
+			 }
+			 
+		 //zero padding for data fixes
+		 this._zp = function(s){ return ("0"+s).slice(-2); }
+			 this._save = function(fileURL){
+			   if (!window.ActiveXObject) {
+				   var save = document.createElement('a');
+				   save.href = fileURL;
+				   save.target = '_blank';
+				   save.download = this.fileName || 'unknown';
+			 
+				   var evt = new MouseEvent('click', {
+					   'view': window,
+					   'bubbles': true,
+					   'cancelable': false
+				   });
+				   save.dispatchEvent(evt);
+			 
+				   (window.URL || window.webkitURL).revokeObjectURL(save.href);
+			   }
+			 
+			   // for IE < 11
+			   else if ( !! window.ActiveXObject && document.execCommand)     {
+				   var _window = window.open(fileURL, '_blank');
+				   _window.document.close();
+				   _window.document.execCommand('SaveAs', true, this.fileName || fileURL)
+				   _window.close();
+			   }	
+			 }    
+			 
+			 
+		 var now = new Date();
+		 var ics_lines = [
+		"BEGIN:VCALENDAR",
+		"PRODID:-//Microsoft Corporation//Outlook 16.0 MIMEDIR//EN",
+		"VERSION:2.0",
+		"METHOD:PUBLISH",
+		"X-MS-OLK-FORCEINSPECTOROPEN:TRUE",
+		"BEGIN:VTIMEZONE",
+		"TZID:W. Europe Standard Time",
+		"BEGIN:STANDARD",
+		"DTSTART:16011028T030000",
+		"RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10",
+		"TZOFFSETFROM:+0200",
+		"TZOFFSETTO:+0100",
+		"END:STANDARD",
+		"BEGIN:DAYLIGHT",
+		"DTSTART:16010325T020000",
+		"RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3",
+		"TZOFFSETFROM:+0100",
+		"TZOFFSETTO:+0200",
+		"END:DAYLIGHT",
+		"END:VTIMEZONE",
+		"BEGIN:VEVENT",
+		"CLASS:PUBLIC",
+		"CREATED:20220117T211355Z",
+		"DESCRIPTION:Details: hochzeit.baraddur.de\n",
+		"DTEND;TZID='W. Europe Standard Time':20220515T030000",
+		"DTSTAMP:20220117T211355Z",
+		"DTSTART;TZID='W. Europe Standard Time':20220514T170000",
+		"LAST-MODIFIED:20220117T211355Z",
+		"LOCATION:Körbecke\, Borgentreich",
+		"PRIORITY:5",
+		"SEQUENCE:0",
+		"SUMMARY;LANGUAGE=de:Hochzeit Daniel & Julia",
+		"TRANSP:OPAQUE",
+		"X-MICROSOFT-CDO-BUSYSTATUS:BUSY",
+		"X-MICROSOFT-CDO-IMPORTANCE:1",
+		"X-MICROSOFT-DISALLOW-COUNTER:FALSE",
+		"X-MS-OLK-AUTOFILLLOCATION:FALSE",
+		"X-MS-OLK-CONFTYPE:0",
+		"END:VEVENT",
+		"END:VCALENDAR",
+
+		 ];
+	 
+		 var dlurl = 'data:text/calendar;base64,'+btoa(ics_lines.join('\r\n'));
+		 
+			 try {
+				 this._save(dlurl);
+			 }catch(e){
+				 console.log(e);
+			 }
+		 
+		 
+	   
+		}
+		
+		
+	   
+	   </script>
 
 	</head>
 	<body>
@@ -76,7 +195,7 @@
 				<div class="col-xs-2">
 					<div id="fh5co-logo"><a href="index.html">Wedding<strong>.</strong></a></div>
 				</div>
-				<div class="col-xs-10 text-right menu-1">
+				<!--<div class="col-xs-10 text-right menu-1">
 					<ul>
 						<li class="active"><a href="index.html">Home</a></li>
 						<li><a href="about.html">Story</a></li>
@@ -100,7 +219,7 @@
 						</li>
 						<li><a href="contact.html">Contact</a></li>
 					</ul>
-				</div>
+				</div>-->
 			</div>
 			
 		</div>
@@ -114,9 +233,9 @@
 					<div class="display-t">
 						<div class="display-tc animate-box" data-animate-effect="fadeIn">
 							<h1>Daniel &amp; Julia</h1>
-							<h2>We Are Getting Married</h2>
+							<h2>Wir heiraten kirchlich!</h2>
 							<div class="simply-countdown simply-countdown-one"></div>
-							<p><a href="#" class="btn btn-default btn-sm">Save the date</a></p>
+							<p><a href="#" class="btn btn-default btn-sm" onclick="ical_download()">Save the date</a></p>
 						</div>
 					</div>
 				</div>
@@ -129,17 +248,18 @@
 			<div class="row">
 				<div class="col-md-8 col-md-offset-2 text-center fh5co-heading animate-box">
 					<h2>Hello!</h2>
-					<h3>November 28th, 2016 New York, USA</h3>
-					<p>We invited you to celebrate our wedding</p>
+					<h3>14.Mai 2022</h3>
+					<p>Wir haben euch zu unserer Hochzeit eingeladen!</p>
 				</div>
 			</div>
+			<!--
 			<div class="couple-wrap animate-box">
 				<div class="couple-half">
 					<div class="groom">
 						<img src="images/groom.jpg" alt="groom" class="img-responsive">
 					</div>
 					<div class="desc-groom">
-						<h3>Joefrey Mahusay</h3>
+						<h3>Daniel Winter</h3>
 						<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove</p>
 					</div>
 				</div>
@@ -153,7 +273,7 @@
 						<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove</p>
 					</div>
 				</div>
-			</div>
+			</div>-->
 		</div>
 	</div>
 
@@ -162,8 +282,8 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-8 col-md-offset-2 text-center fh5co-heading animate-box">
-					<span>Our Special Events</span>
-					<h2>Wedding Events</h2>
+					<!--<span>Unsere Veranstaltungen</span>-->
+					<h2>Veranstaltungen</h2>
 				</div>
 			</div>
 			<div class="row">
@@ -172,34 +292,37 @@
 						<div class="col-md-10 col-md-offset-1">
 							<div class="col-md-6 col-sm-6 text-center">
 								<div class="event-wrap animate-box">
-									<h3>Main Ceremony</h3>
+									<h3>Kirchliche Trauung</h3>
 									<div class="event-col">
 										<i class="icon-clock"></i>
-										<span>4:00 PM</span>
-										<span>6:00 PM</span>
+										<span>17:00</span>
+										<!--<span>6:00 PM</span>-->
 									</div>
 									<div class="event-col">
 										<i class="icon-calendar"></i>
-										<span>Monday 28</span>
-										<span>November, 2016</span>
+										<span>Samstag, 14.05.</span>
+										<!-- <span>November, 2016</span> -->
 									</div>
-									<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.</p>
+									<p>Die kirchliche Trauung findet um 17:00 in der St. Blasius Pfarrkirche statt.</p>
+								</br>
+									<a href="https://goo.gl/maps/me4jfec3vi9W4TSB9"><p>Google Maps: <i class="icon-map"></i></p></a>
 								</div>
 							</div>
 							<div class="col-md-6 col-sm-6 text-center">
 								<div class="event-wrap animate-box">
-									<h3>Wedding Party</h3>
+									<h3>Hochzeitsfeier</h3>
 									<div class="event-col">
 										<i class="icon-clock"></i>
-										<span>7:00 PM</span>
-										<span>12:00 AM</span>
+										<span>~18:30</span>
+										<!-- <span>12:00 AM</span> -->
 									</div>
 									<div class="event-col">
 										<i class="icon-calendar"></i>
-										<span>Monday 28</span>
-										<span>November, 2016</span>
+										<span>Samstag, 14.05.</span>
+										<!-- <span>November, 2016</span> -->
 									</div>
-									<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.</p>
+									<p>Im Anschluss an die kirchliche Trauung findet die Hochzeitsfeier auf Winters Hof statt </br> (Wanneweg 4, 34434 Körbecke)</p>
+									<a href="https://goo.gl/maps/K8WihqVimDYYjiH3A"><p>Google Maps: <i class="icon-map"></i></p></a>
 								</div>
 							</div>
 						</div>
@@ -209,7 +332,7 @@
 		</div>
 	</div>
 
-	<div id="fh5co-couple-story">
+	<!-- <div id="fh5co-couple-story">
 		<div class="container">
 			<div class="row">
 				<div class="col-md-8 col-md-offset-2 text-center fh5co-heading animate-box">
@@ -261,24 +384,59 @@
 				</div>
 			</div>
 		</div>
+	</div> -->
+
+	<div id="fh5co-couple">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2 text-center fh5co-heading animate-box">
+					<h2>An- und Abreise</h2>
+					<h3>Bustransfer</h3>
+					<p>Wir haben vor, bei ausreichdem Interesse einen Bustransfer zwischen Paderborn und Körbecke einzurichten. Je nach Menge der Busfahrwilligen fahren ein oder mehrere Busse vom Hauptbahnhof in Paderborn so, dass sie gegen kurz vor 17:00 zur Trauung ankommen</p>
+					<p>Nachts sollen diese Busse dann zu einer Uhrzeit wieder zurück zum Paderborner Hauptbahnhof, sodass ihr ab Paderborn mit den Nachtbussen in die umliegenden Orte kommt.</p>
+					<p><b>Bitte tragt euch so früh wie möglich ein, wenn ihr den Bustransfer in Anspruch nehmen möchtet, da wir entsprechend früh die Busse bestellen müssen.</b></p>
+					<h2>Übernachtungen</h2>
+					<h3>Es gibt mehrere Möglichkeiten in Körbecke und Umgebung zu übernachten:</h3>
+					<p><b>Zelten auf der Wiese von Winters Hof</b></br>
+						Auf der Wiese hinter der Feierlichkeit ist genug Platz zum zelten gegeben. Bitte sprecht uns einmal kurz an, wenn ihr vor habt zu Zelten, damit wir besser planen können</p>
+					<p><b>Bettenlager bei Winters</b></br>
+						Wir haben bei Winters die Möglichkeit, ein Bettenlager einzurichten. Da wir allerdings nur begrenzt Feldbetten/Matratzen haben, sprecht uns auch hier bitte kurz an, damit wir besser planen können. </p>
+					<p>-----------</p>
+						<p>Wer übernachtet ist natürlich zum Frühstück am nächsten Morgen inkl. Aufräumen eingeladen ;-P</p>
+				</div>
+			</div>
+		</div>
 	</div>
 
-	<div id="fh5co-feedback" class="fh5co-section-gray">
+	<div id="fh5co-event" class="fh5co-bg" style="background-image:url(images/img_bg_4.jpg);min-height:1250px">
 		<div class="container">
 			<div class="row">
 				<div class="col-md-8 col-md-offset-2 text-center fh5co-heading animate-box">
 					<span>Rückmeldungen</span>
 					<h2>Rückmeldungen</h2>
-					<p>Bitte tragt euch hier ein, wenn ihr an unserer Hochzeit teilnehmen möchtet.</p>
+					<h3 style="color:white">Bitte tragt euch hier ein, wenn ihr diesen besonderen Tag mit uns feiern möchtet.</h3>
 				</div>
 			</div>
+			<div class="row ">
+				<div class="col-md-8 col-md-offset-2 text-center fh5co-heading animate-box">
+					<iframe width="100%" height= "750px" src= "https://forms.office.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__qEUT2NURUEwRVJIUjRFWERONjBVNEdJM1JBWjJBNi4u&embed=true" frameborder= "0" marginwidth= "0" marginheight= "0" style= "border: none; max-width:100%; max-height:100vh" allowfullscreen webkitallowfullscreen mozallowfullscreen msallowfullscreen> </iframe>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="fh5co-couple" class="fh5co-section-gray">
+		<div class="container">
 			<div class="row">
-				<iframe width="100%" height= "650px" src= "https://forms.office.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__qEUT2NURUEwRVJIUjRFWERONjBVNEdJM1JBWjJBNi4u&embed=true" frameborder= "0" marginwidth= "0" marginheight= "0" style= "border: none; max-width:100%; max-height:100vh" allowfullscreen webkitallowfullscreen mozallowfullscreen msallowfullscreen> </iframe>
+				<div class="col-md-8 col-md-offset-2 text-center fh5co-heading animate-box">
+					<h2>Tipps für Geschenkesuchende</h2>
+					<p>Liebe, Gesundheit, Glück und Geld :-)</p>
+				</div>
 			</div>
 		</div>
 	</div>
 
-	<div id="fh5co-gallery" class="fh5co-section-gray">
+	<!-- Eine Gallerie mit Fotos und ähnlichem, 3*x-->
+	<!-- <div id="fh5co-gallery" class="fh5co-section-gray">
 		<div class="container">
 			<div class="row">
 				<div class="col-md-8 col-md-offset-2 text-center fh5co-heading animate-box">
@@ -372,9 +530,10 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</div> -->
 
-	<div id="fh5co-counter" class="fh5co-bg fh5co-counter" style="background-image:url(images/img_bg_5.jpg);">
+	<!--Unnötige Counter-->
+	<!-- <div id="fh5co-counter" class="fh5co-bg fh5co-counter" style="background-image:url(images/img_bg_5.jpg);">
 		<div class="overlay"></div>
 		<div class="container">
 			<div class="row">
@@ -425,9 +584,10 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</div> -->
 
-	<div id="fh5co-testimonial">
+	<!-- Gallerie mit Glückwünschen, Horizontal Scrollbar -->
+	<!-- <div id="fh5co-testimonial">
 		<div class="container">
 			<div class="row">
 				<div class="row animate-box">
@@ -479,9 +639,9 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</div> -->
 
-	<div id="fh5co-services" class="fh5co-section-gray">
+	<!-- <div id="fh5co-services" class="fh5co-section-gray">
 		<div class="container">
 			
 			<div class="row animate-box">
@@ -535,18 +695,19 @@
 
 			
 		</div>
-	</div>
+	</div> -->
 
 
-	<div id="fh5co-started" class="fh5co-bg" style="background-image:url(images/img_bg_4.jpg);">
+	<!-- <div id="fh5co-started" class="fh5co-bg" style="background-image:url(images/img_bg_4.jpg);">
 		<div class="overlay"></div>
 		<div class="container">
 			<div class="row animate-box">
 				<div class="col-md-8 col-md-offset-2 text-center fh5co-heading">
-					<h2>Are You Attending?</h2>
-					<p>Please Fill-up the form to notify you that you're attending. Thanks.</p>
+					<h2>Rückmeldungen</h2>
+					<p>Bitte tragt euch hier ein, wenn ihr an unserer Hochzeit teilnehmen möchtet.</p>
 				</div>
 			</div>
+			
 			<div class="row animate-box">
 				<div class="col-md-10 col-md-offset-1">
 					<form class="form-inline">
@@ -567,9 +728,12 @@
 						</div>
 					</form>
 				</div>
-			</div>
+			</div> -->
+		<!--</div>
+		<div class="row">
+			<iframe width="60%" height= "750px" src= "https://forms.office.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__qEUT2NURUEwRVJIUjRFWERONjBVNEdJM1JBWjJBNi4u&embed=true" frameborder= "0" marginwidth= "0" marginheight= "0" style= "border: none; max-width:100%; max-height:100vh" allowfullscreen webkitallowfullscreen mozallowfullscreen msallowfullscreen> </iframe>
 		</div>
-	</div>
+	</div> -->
 
 	<footer id="fh5co-footer" role="contentinfo">
 		<div class="container">
